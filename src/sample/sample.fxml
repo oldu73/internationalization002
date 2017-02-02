@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
-    <center>
-
-        <!--  The "%" in the text-tag means that the text is going to be translated -->
-        <Label text="%label" BorderPane.alignment="CENTER" />
-    </center>
-</BorderPane>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <ComboBox fx:id="comboBox" layoutX="65.0" layoutY="46.0" prefWidth="150.0" />
+      <Label fx:id="label" layoutX="286.0" layoutY="50.0" text="Label" />
+      <Button fx:id="button1" layoutX="65.0" layoutY="188.0" mnemonicParsing="false" text="button 1" />
+      <Button fx:id="button2" layoutX="65.0" layoutY="230.0" mnemonicParsing="false" text="button 2" />
+   </children>
+</Pane>

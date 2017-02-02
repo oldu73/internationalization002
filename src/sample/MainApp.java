@@ -1,9 +1,5 @@
 package sample;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +12,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * JavaFX offers a simple way to translate UI components. In this example, a simple gui implements
  * a language switch. The switch is basically a {@link ComboBox} with two languages to choose. The
@@ -25,12 +25,11 @@ import javafx.util.StringConverter;
  *
  * SRC: https://stevenschwenke.de/howToI18nInJavaFXAndIntelliJIDEA
  */
-public class Main extends Application {
+public class MainApp extends Application {
 
-    //TODO get local machine Localisation preferences
-    //TODO get the list of available "translation"
+    //private Locale toLocale = new Locale("de", "DE");
 
-    private Locale toLocale = new Locale("de", "DE");
+    private Locale startLocale = new Locale("en");
 
     BorderPane borderPane = new BorderPane();
 
@@ -44,12 +43,12 @@ public class Main extends Application {
         // SRC: https://www.jmdoudoux.fr/java/dej/chap-i18n.htm
         // L'objet Locale par défaut qui est initialisé par la machine virtuelle avec les paramètres de la machine hôte.
         // La méthode Locale.getDefault() permet de connaître cet objet Locale.
-        System.out.println(Locale.getDefault());
+        //System.out.println(Locale.getDefault());
 
         // SRC: http://stackoverflow.com/questions/12072454/in-java-how-do-i-find-out-what-languages-i-have-available-my-resource-bundle
-        System.out.println(Locale.getAvailableLocales());
+        //Arrays.stream(Locale.getAvailableLocales()).forEach(System.out::println);
 
-        loadView(new Locale("en", "GB"));
+        loadView(startLocale);
         borderPane.setTop(createComboBox());
         stage.setScene(new Scene(borderPane));
         stage.setTitle("Internationalization");
@@ -58,15 +57,27 @@ public class Main extends Application {
 
     private ComboBox<Locale> createComboBox() {
         ComboBox<Locale> comboBox = new ComboBox<>();
+
         //ObservableList<Locale> options = FXCollections.observableArrayList(Locale.ENGLISH, Locale.GERMAN);
-        ObservableList<Locale> options = FXCollections.observableArrayList(new Locale("en", "GB"), new Locale("de", "DE"), new Locale("en", "US"), new Locale("fr", "CH"));
+        //ObservableList<Locale> options = FXCollections.observableArrayList(new Locale("en", "GB"), new Locale("de", "DE"), new Locale("en", "US"), new Locale("fr", "CH"));
+        //ObservableList<Locale> options = FXCollections.observableArrayList(Locale.getAvailableLocales());
+
+        ObservableList<Locale> options = FXCollections.observableArrayList(Locale.ENGLISH, Locale.FRENCH);
+
         comboBox.setItems(options);
         comboBox.setConverter(new StringConverter<Locale>() {
             @Override
             public String toString(Locale object) {
+
                 //return object.getDisplayLanguage();
                 //return object.getLanguage() + " - " + object.getCountry();
-                return object.getDisplayLanguage(toLocale) + " - " + object.getDisplayCountry(toLocale);
+                //return object.getDisplayLanguage(toLocale) + " - " + object.getDisplayCountry(toLocale);
+
+                String objectString  = object.getDisplayLanguage(object);
+                objectString = objectString.substring(0,1).toUpperCase() + objectString.substring(1).toLowerCase();
+
+                return objectString;
+
             }
 
             @Override
@@ -75,13 +86,18 @@ public class Main extends Application {
             }
         });
         comboBox.setCellFactory(p -> new LanguageListCell());
-        comboBox.getSelectionModel().selectFirst();
+        //comboBox.getSelectionModel().selectFirst();
+        comboBox.getSelectionModel().select(startLocale);
 
         comboBox.setOnAction(event -> loadView(comboBox.getSelectionModel().getSelectedItem()));
         return comboBox;
     }
 
-    private void loadView(Locale locale) {
+    private void initView() {
+
+    }
+
+    public void loadView(Locale locale) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
 
@@ -89,6 +105,9 @@ public class Main extends Application {
             // by adding more properties-files with language-specific endings like
             // "E_13_Internationalization_fr.properties".
             fxmlLoader.setResources(ResourceBundle.getBundle("text", locale));
+
+            Controller controller = fxmlLoader.getController();
+            controller.setMainApp(this);
 
             Pane pane = (BorderPane) fxmlLoader.load(this.getClass().getResource("sample.fxml").openStream());
             borderPane.setCenter(pane);
@@ -101,9 +120,19 @@ public class Main extends Application {
         @Override protected void updateItem(Locale item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null) {
+
                 //setText(item.getDisplayLanguage());
                 //setText(item.getLanguage() + " - " + item.getCountry());
-                setText(item.getDisplayLanguage(toLocale) + " - " + item.getDisplayCountry(toLocale));
+                //setText(item.getDisplayLanguage(toLocale) + " - " + item.getDisplayCountry(toLocale));
+
+                // SRC: http://stackoverflow.com/questions/3904579/how-to-capitalize-the-first-letter-of-a-string-in-java
+                // WordUtils.capitalize("i am FINE") = "I Am FINE" from Apache Commons
+
+                String itemString  = item.getDisplayLanguage(item);
+                itemString = itemString.substring(0,1).toUpperCase() + itemString.substring(1).toLowerCase();
+
+                setText(itemString);
+
             }
         }
     }
